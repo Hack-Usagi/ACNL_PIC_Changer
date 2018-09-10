@@ -1,0 +1,168 @@
+title "ACNL_PIC_Changer"
+screen 0, 300, 200
+
+#define EM_SCROLL 0x00B5
+#define SB_BOTTOM 7
+#define EM_REPLACESEL $C2
+
+//ボタンオブジェクト
+objsize 150, 30
+
+	button "select save data file",*select_save
+	button "select picture file(jpg)",*select_pic
+	button "start",*convert
+
+//=============================================
+sdim buf
+mesbox buf, 300, 100, 5, 0
+hMesBox = objinfo(stat, 2)
+
+	hInput = objinfo(stat, 2)
+	sendmsg hInput, $CF, 1
+
+sendmsg hMesBox, EM_SCROLL, SB_BOTTOM, 0
+*restart
+stop
+
+//=============================================
+
+//セーブファイル選択ウィンドウを表示
+*select_save
+	dialog "dat" , 16 , "save data"
+	if ( stat = 0 ){
+		goto *restart
+	}
+    save_data_pass=refstr
+
+//ファイルが正しいかチェック
+　　exist save_data_pass
+　　if( strsize = -1 ){
+　　　　dialog "セーブデータのパスが無効です", 1 , "エラー"
+		goto *reset_save_pass
+　　}
+	sendmsg hMesbox, EM_REPLACESEL, , "セーブデータが選択されました\n　"+save_data_pass+"\n"
+	save=1
+stop
+
+//画像ファイル選択ウィンドウを表示
+*select_pic
+    dialog "jpg" , 16 , "jpg data"
+    if ( stat = 0 ){
+	    goto *restart
+	  }
+    pic_data_pass=refstr
+
+//画像のサイズを取得
+	buffer 999
+		picload pic_data_pass, 0
+ 
+	picW = ginfo(12)
+	picH = ginfo(13)
+
+//ファイルが正しいかチェック
+　　exist pic_data_pass
+　　if( strsize = -1 ){
+　　　　dialog "画像のパスが無効です", 1 , "エラー"
+		goto *reset_pic_pass
+	}
+
+	if( picW != 64 ) or ( picH != 104 ){
+		dialog "像のサイズが不正です\n64×104にして下さい", 1 , "エラー"
+		goto *reset_pic_pass
+	}
+
+	if( strsize > 5000 ){
+		dialog "画像の容量が大き過ぎます\n5MB以内にして下さい", 1, "エラー"
+		goto *reset_pic_pass
+	}
+
+	sendmsg hMesbox, EM_REPLACESEL, , "画像が選択されました\n　"+pic_data_pass+"\n"
+	pic=1
+stop
+
+//画像パスをリセット
+	*reset_pic_pass
+		sendmsg hMesbox, EM_REPLACESEL, , "画像が選択できませんでした\n　"+pic_data_pass+"\n"
+		pic_data_pass=0
+		pic=0
+	goto *restart
+
+//セーブデータのパスをリセット
+	*reset_save_pass
+		sendmsg hMesbox, EM_REPLACESEL, , "セーブデータが選択できませんでした\n　"+save_data_pass+"\n"
+		save_data_pass=0
+		save=0
+	goto *restart
+
+//ここから書き換え処理
+	//ファイルが選択されているかチェック
+	*convert
+		if (save = 0){
+			if (pic = 0){
+				dialog "セーブデータと画像が選択されていません", 1, "エラー"
+				goto *restart
+			}
+			dialog "セーブデータが選択されていません", 1, "エラー"
+			goto *restart
+		}
+
+		if (pic = 0){
+			dialog "画像が選択されていません", 1, "エラー"
+			goto *restart
+		}
+
+	//コンバート
+		sendmsg hMesbox, EM_REPLACESEL, , "\n処理スタート====================\n"
+
+	//セーブのバックアップを取る
+		//backupフォルダが存在しなかったら作る
+		sendmsg hMesbox, EM_REPLACESEL, , "セーブデータをバックアップしています\n"
+		dummy = 0
+			dirlist dummy, "backup", 5
+				if (stat = 0)　{
+					mkdir "backup"
+				}
+		bcopy save_data_pass,"backup\\backup_save_data.dat"
+		sendmsg hMesbox, EM_REPLACESEL, , "　OK\n"
+
+
+		//画像のバイナリデータを代入(pic_data)
+		sendmsg hMesbox, EM_REPLACESEL, , "画像を読み込んでいます\n"
+		exist pic_data_pass
+		pic_size = strsize
+				sdim pic_data,pic_size
+		bload pic_data_pass , pic_data ,pic_size,0
+		sendmsg hMesbox, EM_REPLACESEL, , "　OK\n"
+
+		//セーブデータのバイナリデータを代入(save_data)
+		sendmsg hMesbox, EM_REPLACESEL, , "セーブデータを読み込んでいます\n"
+		exist save_data_pass
+		save_size = strsize
+				sdim save_data,save_size
+		bload save_data_pass , save_data,save_size,0
+		sendmsg hMesbox, EM_REPLACESEL, , "　OK\n"
+
+	//画像のバックアップを取る
+		//画像文字列をセーブデータから切り出す
+		sendmsg hMesbox, EM_REPLACESEL, , "画像をバックアップ出力しています\n"
+		sdim save_pic,5000
+			memcpy save_pic,save_data,5000,0,22488
+			bsave "backup\\backup_pic.jpg",save_pic
+		sendmsg hMesbox, EM_REPLACESEL, , "　OK\n"
+
+		//セーブデータ保存処理
+		dialog "dat" , 17 , "save data"
+		    if ( stat = 0 ){
+			    sendmsg hMesbox, EM_REPLACESEL, , "保存場所が選択されませんでした\n"
+	    goto *restart
+	  }
+
+		　　exist pic_data_pass
+		sendmsg hMesbox, EM_REPLACESEL, , "画像のデータをセーブデータに保存しています\n"
+		save_save_pass=refstr
+			bsave save_save_pass,save_data
+			bsave save_save_pass,pic_data,5000,22488
+		sendmsg hMesbox, EM_REPLACESEL, , "処理完了:セーブデータが出力されました\n　"+save_save_pass
+
+	goto *restart
+stop
