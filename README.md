@@ -10,7 +10,7 @@
 <br>3.「select pic data」を押して差し替えたい画像データ(64×104のJPG)を選択
 <br>4.「start」を押して差し替えスタート
 <br>5.保存ダイアログがでるので任意の場所に保存
-<br>6.保存したデータを<a href="https://www.marcrobledo.com/acnl-editor/">ACNL Save Editor</a>にアップロードして何もしないで保存(セーブデータの修復)
+<br>6.保存したデータをFireFoxで<a href="https://www.marcrobledo.com/acnl-editor/">ACNL Save Editor</a>にアップロードして何もしないで保存(セーブデータの修復)
 <br>7.セーブデータをとびだせ どうぶつの森に書き戻す
 <br>以上</p><img src="https://user-images.githubusercontent.com/40888604/45293325-d026dc00-b532-11e8-9d19-6fc0d3db3362.png"> 
 <h2>あとがき</h2>
