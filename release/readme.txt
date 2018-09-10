@@ -1,6 +1,8 @@
-ACNL_PIC_Changer Ver.1.0J
-開発:Hack-Usagi(うさぎ) 開発言語:HSP
+ACNL_PIC_Changer Ver.1.0j
+開発:Hack-Usagi(うさぎ)
+開発言語:HSP
 公開:2018/9/10 最終更新:2018/9/10
+動作確認:Windows7 32bit/Windows10 64bit
 
 ACNL_PIC_Changer
 
@@ -24,3 +26,7 @@ SpecialThanks
 ・Marc Robledo　素晴らしいACNL Save Editorを開発
 ・私を取り囲むすべての人達とDeveloperの方々
 ・AND YOU
+
+バグや不具合を見つけた場合は以下まで↓
+Twitter @hack_usagi
+https://hackusagi.hateblo.jp/archive
