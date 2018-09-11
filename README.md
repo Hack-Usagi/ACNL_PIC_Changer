@@ -1,7 +1,7 @@
 <h1>ACNL_PIC_Changer</h1>
 <p>制作:Hack-Usagi
 <br>初期公開:2018/9/10 最終更新:2018/9/10
-<br>動作確認:Windows10 32bit/Windows7 64bit</p>
+<br>動作確認:Windows10 64bit/Windows7 32bit</p>
 <p>とびだせ どうぶつの森 Ver.1.5(amiibo+)のプロフィール欄の画像を変更するツール</p>
 <img src="https://user-images.githubusercontent.com/40888604/45293433-25fb8400-b533-11e8-8775-a06da1db581c.jpg"> 
 <h2>使い方</h2>
